@@ -1,4 +1,4 @@
-const CACHE_NAME = 'focus-monitor-v2';
+const CACHE_NAME = 'focus-monitor-v3';
 const ASSETS = [
   'index.html',
   'manifest.json',
@@ -7,8 +7,22 @@ const ASSETS = [
 
 // Install and cache files
 self.addEventListener('install', (e) => {
+  self.skipWaiting(); // Forces the browser to activate this new worker immediately
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+  );
+});
+
+// Activate and clean up old broken caches
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keyList) => {
+      return Promise.all(keyList.map((key) => {
+        if (key !== CACHE_NAME) {
+          return caches.delete(key); // Deletes the old v2 cache
+        }
+      }));
+    })
   );
 });
 
