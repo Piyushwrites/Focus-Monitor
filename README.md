@@ -1,12 +1,14 @@
 🚨 Focus Monitor
+
 A frictionless, zero-dependency web application to enforce deep work and eliminate mindless context-switching.
 
-📖 About the Project
-In an era of endless digital distractions, maintaining cognitive flow state is the ultimate competitive advantage. Focus Monitor is a psychological friction tool designed to break the habit of mindless tab-switching.
+📖 About the Project:
 
+In an era of endless digital distractions, maintaining cognitive flow state is the ultimate competitive advantage. Focus Monitor is a psychological friction tool designed to break the habit of mindless tab-switching.
 Rather than relying on invasive browser extensions or external software, this application operates entirely within a single, local HTML file. It leverages native browser APIs to monitor your attention and delivers immediate, high-urgency auditory and visual feedback the moment you abandon your primary task.
 
-✨ Key Features
+✨ Key Features:
+
 Dual-Mode Tracking:
 
 Flexible Mode (Tabs): Understands that sometimes you need to check a reference. Allows you one "grace period" tab switch, accompanied by a gentle warning beep. A second switch triggers the full alarm.
@@ -19,7 +21,8 @@ Bypasses Notification Blockers: Modern browsers throttle native alert() popups i
 
 100% Local & Private: Runs entirely client-side. No tracking, no data collection, no servers, and no installations required.
 
-🧠 How It Works (Under the Hood)
+🧠 How It Works (Under the Hood):
+
 Due to strict modern browser sandboxing (which prevents websites from spying on your other open tabs), Focus Monitor uses a clever workaround to track your attention:
 
 The Page Visibility API (visibilitychange): Detects when the application tab is hidden (e.g., when you open a new tab or switch to another existing tab).
@@ -28,13 +31,16 @@ The Window Blur Event (blur): Detects when you click completely outside the brow
 
 State Tracking: Instead of trying to count the exact number of tabs you have open (which is impossible for a standard webpage), the app tracks "Focus Abandonment Events" to enforce its rules.
 
-🚀 Getting Started
+🚀 Getting Started:
+
 Because Focus Monitor is a single-file application, there is no build process or complex installation.
 
-Prerequisites
+Prerequisites:
+
 A modern web browser (Google Chrome, Edge, Brave, or Firefox).
 
-Usage
+Usage:
+
 Download the index.html file from this repository.
 
 Double-click the file to open it in your browser.
@@ -45,7 +51,8 @@ Click "Enable Focus Mode".
 
 Leave the tab open and begin your deep work.
 
-🛠️ Built With
+🛠️ Built With:
+
 HTML5: Semantic structure and custom modal UI.
 
 CSS3: Clean, minimal styling with CSS variables and keyframe animations.
@@ -54,6 +61,7 @@ Vanilla JavaScript (ES6+): Core logic and event listeners.
 
 Web Audio API: For real-time, browser-native sound synthesis.
 
-👨‍💻 Author
-Piyush Sahoo
+👨‍💻 Author:
+
+Piyush Sahoo.
 A side project built to explore browser APIs and optimize personal productivity.
