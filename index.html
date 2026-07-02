@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Focus Monitor</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="icon.png">
+
     <style>
         :root {
             --bg-color: #f4f4f9;
@@ -16,49 +21,32 @@
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            text-align: center;
-            transition: background-color 0.1s ease;
+            margin: 0; padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color); color: var(--text-color);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; text-align: center; transition: background-color 0.1s ease;
             overflow: hidden;
         }
 
         .container {
-            max-width: 500px;
-            padding: 2.5rem 2rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 10;
+            max-width: 500px; padding: 2.5rem 2rem; background: white;
+            border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative; z-index: 10;
         }
 
         h1 { margin-top: 0; font-size: 1.8rem; }
         p { color: #666; line-height: 1.5; margin-bottom: 1.5rem; }
 
         .settings-group {
-            margin-bottom: 2rem;
-            text-align: left;
-            background: #f8fafc;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            margin-bottom: 2rem; text-align: left; background: #f8fafc;
+            padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;
         }
 
         label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem; }
-        
         select {
-            width: 100%; padding: 10px; border-radius: 6px;
-            border: 1px solid #cbd5e1; font-size: 1rem;
-            background-color: white; cursor: pointer;
+            width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;
+            font-size: 1rem; background-color: white; cursor: pointer;
         }
 
         button {
@@ -75,49 +63,27 @@
         
         .status-badge {
             display: inline-block; margin-top: 1.5rem; padding: 8px 16px;
-            border-radius: 9999px; background-color: #e5e7eb;
-            color: #4b5563; font-size: 0.9rem; font-weight: 600;
-            transition: all 0.3s ease;
+            border-radius: 9999px; background-color: #e5e7eb; color: #4b5563;
+            font-size: 0.9rem; font-weight: 600; transition: all 0.3s ease;
         }
-
         .status-active { background-color: #dcfce7 !important; color: #166534 !important; }
         .status-warning { background-color: #fef08a !important; color: #854d0e !important; }
 
         .footer {
             position: absolute; bottom: 20px; font-size: 0.85rem;
-            color: #94a3b8; letter-spacing: 0.5px;
-            z-index: 5;
+            color: #94a3b8; letter-spacing: 0.5px; z-index: 5;
         }
 
-        /* Custom Full-Screen Alert Modal */
         #alarm-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: rgba(153, 27, 27, 0.95);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(153, 27, 27, 0.95); color: white; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
         }
-
-        #alarm-modal.show {
-            opacity: 1;
-            pointer-events: auto;
-            animation: pulse-bg 0.5s infinite alternate;
-        }
-
+        #alarm-modal.show { opacity: 1; pointer-events: auto; animation: pulse-bg 0.5s infinite alternate; }
         #alarm-modal h2 { font-size: 3rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         #alarm-modal p { color: white; font-size: 1.2rem; max-width: 600px; margin-bottom: 2rem; }
-        
-        #alarm-modal button {
-            background-color: white; color: var(--alert); width: auto;
-            font-size: 1.2rem; padding: 15px 40px;
-        }
+        #alarm-modal button { background-color: white; color: var(--alert); width: auto; font-size: 1.2rem; padding: 15px 40px; }
         #alarm-modal button:hover { background-color: #f1f5f9; }
 
         @keyframes pulse-bg {
@@ -156,6 +122,16 @@
     </footer>
 
     <script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('PWA Service Worker Registered!'))
+                    .catch(err => console.error('PWA Registration Failed:', err));
+            });
+        }
+
+        // Core App Logic
         let isFocusModeActive = false;
         let audioCtx = null;
         let awayCount = 0; 
@@ -195,32 +171,21 @@
         dismissBtn.addEventListener('click', () => {
             alarmModal.classList.remove('show');
             awayCount = 0; 
-            if (isFocusModeActive) {
-                updateStatus("Monitoring...", "status-active");
-            }
+            if (isFocusModeActive) updateStatus("Monitoring...", "status-active");
         });
 
-        // Tracks when the user leaves the tab
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden' && isFocusModeActive) {
-                handleFocusLost();
-            }
+            if (document.visibilityState === 'hidden' && isFocusModeActive) handleFocusLost();
         });
 
-        // Tracks when the user clicks entirely outside the browser
         window.addEventListener('blur', () => {
             if (isFocusModeActive && document.visibilityState === 'visible') {
-                 setTimeout(() => {
-                     if (!document.hasFocus()) {
-                         handleFocusLost();
-                     }
-                 }, 200);
+                 setTimeout(() => { if (!document.hasFocus()) handleFocusLost(); }, 200);
             }
         });
 
         function handleFocusLost() {
             const mode = modeSelect.value;
-            
             if (mode === 'tab') {
                 awayCount++;
                 if (awayCount > 1) {
@@ -243,19 +208,14 @@
             if (!audioCtx || audioCtx.state !== 'running') return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            
-            osc.type = 'sine';
-            osc.frequency.value = 600;
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+            osc.type = 'sine'; osc.frequency.value = 600;
+            osc.connect(gain); gain.connect(audioCtx.destination);
             
             const now = audioCtx.currentTime;
             gain.gain.setValueAtTime(0, now);
             gain.gain.linearRampToValueAtTime(0.2, now + 0.05);
             gain.gain.linearRampToValueAtTime(0, now + 0.2);
-            
-            osc.start(now);
-            osc.stop(now + 0.2);
+            osc.start(now); osc.stop(now + 0.2);
         }
 
         function triggerIntervention() {
@@ -265,27 +225,20 @@
             alarmModal.classList.add('show');
             updateStatus("ALARM TRIGGERED", "status-warning");
 
-            // 3-Loop Red Alert Klaxon
             for (let i = 0; i < 3; i++) {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-
                 osc.type = 'square'; 
                 
                 const startTime = now + (i * 0.25);
                 osc.frequency.setValueAtTime(600, startTime);
                 osc.frequency.setValueAtTime(800, startTime + 0.125);
-
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-
+                osc.connect(gain); gain.connect(audioCtx.destination);
                 gain.gain.setValueAtTime(0, startTime);
                 gain.gain.linearRampToValueAtTime(0.5, startTime + 0.02);
                 gain.gain.linearRampToValueAtTime(0.5, startTime + 0.23);
                 gain.gain.linearRampToValueAtTime(0, startTime + 0.25);
-
-                osc.start(startTime);
-                osc.stop(startTime + 0.25);
+                osc.start(startTime); osc.stop(startTime + 0.25);
             }
         }
     </script>
